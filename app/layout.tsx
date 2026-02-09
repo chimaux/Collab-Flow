@@ -1,5 +1,7 @@
+import '@ant-design/v5-patch-for-react-19';
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { AntdRegistry } from '@ant-design/nextjs-registry';
 import "./globals.css";
 
 
@@ -27,11 +29,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      
       <body
         className={`${geistSans.variable} ${geistMono.variable}  antialiased`}
       >
-        {children}
+        <AntdRegistry>{children} </AntdRegistry>
       </body>
+     
     </html>
   );
 }

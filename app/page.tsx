@@ -1,4 +1,4 @@
-import Image from "next/image";
+
 import "./globals.css"
 import { funnelDisplay } from '@/lib/fonts'; 
 import { getImageProps } from 'next/image';
