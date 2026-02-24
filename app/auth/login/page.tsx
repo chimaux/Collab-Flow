@@ -137,6 +137,7 @@ export default function Login() {
                 htmlType="submit"
                 block
                 size="large"
+                loading={loading}
                 style={{
                   height: 45,
                   fontSize: 18,
