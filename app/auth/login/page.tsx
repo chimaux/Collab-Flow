@@ -25,6 +25,7 @@ export default function Login() {
 
   const supaBase = getSupabaseBrowserClient()
   const [status, setStatus] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
   // const [surrentUser, setCurrentUser] = useState<User | null>(user);
 
 
@@ -36,6 +37,7 @@ export default function Login() {
 
 
   const onFinish = async (values: loginFormValues) => {
+    setLoading(true)
     const { email, password } = values;
     const { error } = await supaBase.auth.signInWithPassword({
       email,
@@ -43,10 +45,12 @@ export default function Login() {
     })
     if (error) {
       setStatus(error.message)
+      setLoading(false)
     }
     else {
       setStatus("Login successful")
       form.resetFields();
+      setLoading(false)
       router.push("/dashboard")
     }
   }

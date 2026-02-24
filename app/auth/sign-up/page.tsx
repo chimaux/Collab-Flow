@@ -7,6 +7,7 @@ import { CloseOutlined, EyeInvisibleOutlined, EyeOutlined, GoogleOutlined } from
 import NextLink from "next/link"
 import { getSupabaseBrowserClient } from "@/lib/supabase/browser-client";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Signup() {
 
@@ -17,12 +18,15 @@ export default function Signup() {
     }
 
      const supaBase = getSupabaseBrowserClient();
+     const router = useRouter()
 
     const [form] = Form.useForm();
     const [status, setStatus] = useState<string | null>(null);
+    const [loading, setLoading] = useState<boolean>(false);
 
 
     const onFinish = async (values: signupValues) => {
+        setLoading(true)
         const { email, password } = values;
         const { error } = await supaBase.auth.signUp({
             email,
@@ -34,6 +38,7 @@ export default function Signup() {
         if (error) {
 
             setStatus(error.message)
+            setLoading(false)
         }
         else {
             form.setFieldsValue({
@@ -41,7 +46,10 @@ export default function Signup() {
                 password:"",
                 confirmPassword:""
             })
-            setStatus("Email has been sent to your inbox, confirm your new account")
+            router.push("/auth/login")
+            setLoading(false)
+            setStatus("successful")
+            // setStatus("Email has been sent to your inbox, confirm your new account")
         }
     }
 
@@ -169,6 +177,7 @@ export default function Signup() {
 
                         <FormItem className="mb-4">
                             <Button
+                            loading={loading}
                                 type="primary"
                                 htmlType="submit"
                                 block
