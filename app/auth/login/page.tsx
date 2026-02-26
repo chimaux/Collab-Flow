@@ -72,15 +72,14 @@ export default function Login() {
 
         <div className="bg-[#f0f0f0] rounded-[15px] lg:rounded-[30px] h-[85vh] lg:h-[90vh] w-[80vw] lg:w-[70vw] xl:w-[40vw] flex flex-col items-center px-5 md:px-10 lg:px-15">
 
-          <div className=" mt-4 mb-4 lg:mb-10 lg:mt-10 w-10  lg:w-16">
-            <Zap
-              size={"100%"}
-              color="currentColor"
-              strokeWidth={0}
-              fill="#096ef2"
-
-            />
-          </div>
+               <div className="mt-4 mb-4 lg:mb-10 lg:mt-10">
+  <Image
+    src="/logo.svg"
+    alt="logo"
+    width={200}
+    height={200}
+  />
+</div>
 
           <div className="w-[70%] text-2xl lg:text-3xl font-semibold pl-5 lg:pl-15 mb-4 lg:mb-6 text-gray-950">
             Login
