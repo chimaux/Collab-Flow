@@ -22,8 +22,8 @@ async function handleSignOut(){
   setLoader(true);
   const supabase =  getSupabaseBrowserClient ();
   await supabase.auth.signOut();
-  route.push("/auth/login")
-  setLoader(false)
+  route.replace("/auth/login")
+ 
 }
 
 

@@ -33,7 +33,9 @@ export default function Signup() {
             provider: "google",
             options: {
                 redirectTo: `${window.location.origin}/auth/callback`,
-
+    queryParams: {
+      prompt: "select_account",
+    },
             },
         });
 
@@ -95,8 +97,8 @@ export default function Signup() {
                         <Image
                             src="/logo.svg"
                             alt="logo"
-                            width={200}
-                            height={200}
+                         width={200}
+                            height={0}
                         />
                     </div>
 
