@@ -22,11 +22,18 @@ export const metadata: Metadata = {
   description: "collaborate",
 };
 
+
+
+   
+
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
+  
   return (
     <html lang="en">
       

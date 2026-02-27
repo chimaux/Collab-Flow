@@ -4,76 +4,77 @@ import { Zap } from 'lucide-react';
 import { Form, Button, Input, message, Divider } from 'antd';
 import FormItem from 'antd/es/form/FormItem';
 import { CloseOutlined, EyeInvisibleOutlined, EyeOutlined, GoogleOutlined } from '@ant-design/icons';
-import NextLink from "next/link"
+import NextLink from "next/link";
 import { getSupabaseBrowserClient } from "@/lib/supabase/browser-client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-export default function Signup() {
-
-    interface signupValues {
-        email: string;
-        password: string;
-        confirmPassword: string;
-    }
 
 
-    const supaBase = getSupabaseBrowserClient();
-    const router = useRouter()
 
+
+interface loginFormValues {
+    email: string;
+    password: string;
+}
+
+
+export default function Login_component() {
+
+    const router = useRouter();
     const [form] = Form.useForm();
+
+
+    const supaBase = getSupabaseBrowserClient()
     const [status, setStatus] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
-
     const [googleLoading, setGoogleLoading] = useState<boolean>(false);
+    // const [surrentUser, setCurrentUser] = useState<User | null>(user);
 
-    async function handleGoogleSignup() {
+    // HANDLE GOOGLE LOGIN
+
+    async function handleGoogleLogin() {
         setGoogleLoading(true)
         await supaBase.auth.signInWithOAuth({
             provider: "google",
             options: {
                 redirectTo: `${window.location.origin}/auth/callback`,
-
+              
             },
         });
-
+       
     }
 
 
 
 
-    const onFinish = async (values: signupValues) => {
-        setLoading(true)
-        const { email, password } = values;
-        const { error } = await supaBase.auth.signUp({
-            email,
-            password,
-            options: {
-                emailRedirectTo: `${window.location.origin}/login`,
-            }
-        });
-        if (error) {
-
-            setStatus(error.message)
-            setLoading(false)
-        }
-        else {
-            form.setFieldsValue({
-                email: "",
-                password: "",
-                confirmPassword: ""
-            })
-            router.push("/auth/login")
-            setLoading(false)
-            setStatus("Sign-up successful")
-            // setStatus("Email has been sent to your inbox, confirm your new account")
-        }
-    }
 
     const closeStatusMessageBox = () => {
         setStatus(null)
 
     }
+
+
+
+    const onFinish = async (values: loginFormValues) => {
+        setLoading(true)
+        const { email, password } = values;
+        const { error } = await supaBase.auth.signInWithPassword({
+            email,
+            password
+        })
+        if (error) {
+            setStatus(error.message)
+            setLoading(false)
+        }
+        else {
+            setStatus("Login successful")
+            form.resetFields();
+            setLoading(false)
+            router.push("/dashboard")
+        }
+    }
+
 
 
 
@@ -89,7 +90,7 @@ export default function Signup() {
 
             <div className="absolute w-screen h-screen flex justify-center items-center">
 
-                <div className="bg-[#f0f0f0] rounded-[15px] lg:rounded-[30px] h-[90vh] lg:h-[98vh] w-[80vw] lg:w-[70vw] xl:w-[40vw] flex flex-col items-center px-5 md:px-10 lg:px-15">
+                <div className="bg-[#f0f0f0] rounded-[15px] lg:rounded-[30px] h-[85vh] lg:h-[90vh] w-[80vw] lg:w-[70vw] xl:w-[40vw] flex flex-col items-center px-5 md:px-10 lg:px-15">
 
                     <div className="mt-4 mb-4 lg:mb-10 lg:mt-10">
                         <Image
@@ -101,14 +102,12 @@ export default function Signup() {
                     </div>
 
                     <div className="w-[70%] text-2xl lg:text-3xl font-semibold pl-5 lg:pl-15 mb-4 lg:mb-6 text-gray-950">
-                        Signup
+                        Login
                     </div>
                     <Form
                         onFinish={onFinish}
                         form={form}
-
                         layout="vertical" className="w-full"
-
                     >
                         <FormItem
 
@@ -123,7 +122,6 @@ export default function Signup() {
                                     message: 'Please enter a valid email address',
                                 },
                             ]}
-
                             validateTrigger={['onChange', 'onBlur']}
                         >
                             <Input
@@ -135,15 +133,7 @@ export default function Signup() {
                         <FormItem
 
                             name="password"
-                            rules={[
-                                { required: true, message: 'Please enter your password!' },
-                                { min: 8, message: 'Password must be at least 8 characters long' },
-                                {
-                                    pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-                                    message:
-                                        'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (@$!%*?&)',
-                                },
-                            ]}
+                            rules={[{ required: true, message: 'Please input your password!' }]}
                             validateTrigger={['onChange', 'onBlur']}
                         >
                             <Input.Password
@@ -159,52 +149,21 @@ export default function Signup() {
                                 className="w-full h-12 lg:h-14"
                             />
                         </FormItem>
-                        <FormItem
-
-                            name="confirmPassword"
-                            dependencies={['password']}
-                            hasFeedback
-                            rules={[
-                                { required: true, message: 'Please confirm your password!' },
-                                ({ getFieldValue }) => ({
-                                    validator(_, value) {
-                                        if (!value || getFieldValue('password') === value) {
-                                            return Promise.resolve();
-                                        }
-                                        return Promise.reject(new Error('The two passwords do not match!'));
-                                    },
-                                }),
-                            ]}
-                            validateTrigger={['onChange', 'onBlur']}
-                        >
-                            <Input.Password
-                                iconRender={(visible) =>
-                                    visible ? (
-                                        <EyeOutlined style={{ color: '#096ef2' }} />
-                                    ) : (
-                                        <EyeInvisibleOutlined style={{ color: 'gray' }} />
-                                    )
-                                }
-                                placeholder="confirm password"
-                                type="password"
-                                className="w-full h-12 lg:h-14"
-                            />
-                        </FormItem>
 
                         <FormItem className="mb-4">
                             <Button
-                                loading={loading}
                                 type="primary"
                                 htmlType="submit"
                                 block
                                 size="large"
+                                loading={loading}
                                 style={{
                                     height: 45,
                                     fontSize: 18,
                                     padding: '0 32px',
                                 }}
                             >
-                                Signup
+                                Log In
                             </Button>
                         </FormItem>
                     </Form>
@@ -212,9 +171,8 @@ export default function Signup() {
                         <Divider plain >or</Divider>
                     </div>
                     <Button
-                        onClick={handleGoogleSignup}
-                        loading={googleLoading}
-
+                        onClick={handleGoogleLogin}
+                            loading={googleLoading}
                         block
                         size="large"
                         style={{
@@ -227,17 +185,15 @@ export default function Signup() {
                         continue with google
                     </Button>
                     <NextLink
-                        href={"/auth/login"}
+                        href={"/auth/sign-up"}
                     >
-                        <div className="text-[#1676fd] mt-4 md:mt-6">Login</div>
+                        <div className="text-[#1676fd] mt-4 md:mt-6">Create Account</div>
                     </NextLink>
 
                     <div className="text-[#1676fd]">Join a Board Via Link</div>
                 </div>
 
             </div>
-
-
 
             {
                 status &&
@@ -264,6 +220,8 @@ export default function Signup() {
 
                 </div>
             }
+
+
         </div>
     )
 }

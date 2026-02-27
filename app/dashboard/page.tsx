@@ -1,4 +1,3 @@
-
 import { createSupabaseServerClient } from "@/lib/supabase/server-client";
 import Dashboard_component from "../../components/Dashboard_component";
 import { redirect } from "next/navigation";
